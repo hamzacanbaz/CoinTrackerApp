@@ -1,21 +1,22 @@
-package com.hamzacanbaz.cointracker.ui.coinList
+package com.hamzacanbaz.cointracker.screen.settings
 
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material.*
+import androidx.compose.material.Surface
+import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import com.hamzacanbaz.cointracker.ui.Greeting
 
 @Composable
-fun CoinListScreen(
+fun SettingsScreen(
+    name:String?=null
 ) {
     Surface(
         modifier = Modifier.fillMaxSize(),
         color = Color.Cyan
     ) {
 
-        Greeting("Android")
+        Greeting(name?:"hc")
     }
 }
 @Composable

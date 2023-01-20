@@ -1,4 +1,4 @@
-package com.hamzacanbaz.cointracker.ui.theme
+package com.hamzacanbaz.cointracker.screen.theme
 
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Shapes

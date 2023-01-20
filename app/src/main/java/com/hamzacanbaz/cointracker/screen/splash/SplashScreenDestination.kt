@@ -1,4 +1,4 @@
-package com.hamzacanbaz.cointracker.ui.splash
+package com.hamzacanbaz.cointracker.screen.splash
 
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
