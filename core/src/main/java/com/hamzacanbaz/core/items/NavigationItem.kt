@@ -1,24 +1,24 @@
-package com.hamzacanbaz.cointracker.screen
+package com.hamzacanbaz.core.items
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.ui.graphics.vector.ImageVector
-import com.hamzacanbaz.cointracker.screen.coinList.CoinListDestination
-import com.hamzacanbaz.cointracker.screen.settings.SettingsDestination
 
-sealed class BottomBarScreen(
+
+sealed class NavigationItem(
     val route: String,
     val title: String,
     val icon: ImageVector
 ) {
-    object Home : BottomBarScreen(
-        route = CoinListDestination.route,
+    object Home : NavigationItem(
+        route = "coinListScreenRoute",
         title = "Home",
         icon = Icons.Default.Home
     )
-    object Settings : BottomBarScreen(
-        route = SettingsDestination.route,
+
+    object Settings : NavigationItem(
+        route = "settingsScreenRoute",
         title = "Settings",
         icon = Icons.Default.Settings
     )

@@ -1,4 +1,4 @@
-package com.hamzacanbaz.cointracker.screen.coinList
+package com.hamzacanbaz.cointracker.screen.coinDetail
 
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.*
@@ -8,21 +8,16 @@ import androidx.compose.ui.graphics.Color
 import com.hamzacanbaz.cointracker.screen.Greeting
 
 @Composable
-fun CoinListScreen(
+fun CoinDetailScreen(
     name:String?=null,
-    goToAlarms: () -> Unit
 ) {
     Surface(
         modifier = Modifier.fillMaxSize(),
         color = Color.Cyan
     ) {
 
-        Greeting(name?:"sad",)
-        Button(onClick = {
-            goToAlarms.invoke()
-        }) {
+        Greeting(name?:"detail",)
 
-        }
     }
 }
 @Composable

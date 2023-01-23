@@ -9,16 +9,16 @@ import androidx.compose.ui.graphics.Color
 
 @Composable
 fun SettingsScreen(
-    name:String?=null
+    name: String? = null
 ) {
     Surface(
         modifier = Modifier.fillMaxSize(),
         color = Color.Cyan
     ) {
-
-        Greeting(name?:"hc")
+        Greeting(name ?: "hc")
     }
 }
+
 @Composable
 fun Greeting(name: String) {
     Text(text = "Hello $name!")
