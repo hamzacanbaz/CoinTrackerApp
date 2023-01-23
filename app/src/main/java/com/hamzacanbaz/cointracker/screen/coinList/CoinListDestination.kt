@@ -8,10 +8,12 @@ object CoinListDestination : Destination {
     override val route: String = "coinListScreenRoute"
 }
 
-fun NavGraphBuilder.coinListScreenGraph() {
+fun NavGraphBuilder.coinListScreenGraph(goToAlarms : ()->Unit) {
     composable(
         route = CoinListDestination.route,
     ) {
-        CoinListScreen()
+        CoinListScreen(goToAlarms = {
+            goToAlarms.invoke()
+        })
     }
 }
