@@ -12,7 +12,8 @@ fun NavGraphBuilder.coinListScreenGraph(goToAlarms : ()->Unit) {
     composable(
         route = CoinListDestination.route,
     ) {
-        CoinListScreen(goToAlarms = {
+        CoinListScreen(
+        goToAlarms = {
             goToAlarms.invoke()
         })
     }

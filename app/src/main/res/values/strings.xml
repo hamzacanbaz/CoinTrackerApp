@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">CoinTracker</string>
+    <string name="hint_search_query">Search Coin</string>
 </resources>
