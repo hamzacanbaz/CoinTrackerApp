@@ -1,9 +1,9 @@
-package com.hamzacanbaz.data.CoinBaseResponseModel.AllAssets
+package com.hamzacanbaz.domain.model
 
 
 import com.google.gson.annotations.SerializedName
 
-data class Data(
+data class Coin(
     @SerializedName("changePercent24Hr")
     val changePercent24Hr: String,
     @SerializedName("explorer")

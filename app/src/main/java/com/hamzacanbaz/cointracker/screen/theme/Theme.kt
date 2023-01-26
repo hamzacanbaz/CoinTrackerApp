@@ -35,6 +35,7 @@ fun CoinTrackerTheme(darkTheme: Boolean = isSystemInDarkTheme(), content: @Compo
         LightColorPalette
     }
 
+
     MaterialTheme(
         colors = colors,
         typography = Typography,

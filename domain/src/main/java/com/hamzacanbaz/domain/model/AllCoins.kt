@@ -1,11 +1,11 @@
-package com.hamzacanbaz.data.CoinBaseResponseModel.AllAssets
+package com.hamzacanbaz.domain.model
 
 
 import com.google.gson.annotations.SerializedName
 
-data class AllAssetsModel(
+data class AllCoins(
     @SerializedName("data")
-    val `data`: List<Data>,
+    val `data`: List<Coin>,
     @SerializedName("timestamp")
     val timestamp: Long
 )
