@@ -9,7 +9,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hierarchy
@@ -37,25 +36,35 @@ fun MainScreen() {
         SplashScreenDestination.route -> false
         else -> true
     }
+
+    val hideBottomNavbarAndToolbar = when (currentRoute.value?.destination?.route) {
+        SplashScreenDestination.route -> true
+        else -> false
+    }
+
     Scaffold(
         topBar = {
-            TopAppBar(
-                title = {
-                    Text(text = "Top App Bar")
-                },
-                navigationIcon = if (showBackButton) {
-                    {
-                        IconButton(onClick = { navController.navigateUp() }) {
-                            Icon(Icons.Filled.ArrowBack, "backIcon")
+            if (!hideBottomNavbarAndToolbar) {
+                TopAppBar(
+                    title = {
+                        Text(text = "Top App Bar")
+                    },
+                    navigationIcon = if (showBackButton) {
+                        {
+                            IconButton(onClick = { navController.navigateUp() }) {
+                                Icon(Icons.Filled.ArrowBack, "backIcon")
+                            }
                         }
-                    }
-                } else null,
-                backgroundColor = MaterialTheme.colors.primary,
-                contentColor = Color.White,
-                elevation = 10.dp
-            )
+                    } else null,
+                    backgroundColor = MaterialTheme.colors.primary,
+                    contentColor = Color.White,
+                    elevation = 10.dp
+                )
+            }
         }, bottomBar = {
-            BottomBar(navHostController = navController)
+            if (!hideBottomNavbarAndToolbar) {
+                BottomBar(navHostController = navController)
+            }
         }
     ) {
         NavHost(navController = navController)

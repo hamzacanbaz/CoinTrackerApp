@@ -1,17 +1,12 @@
 package com.hamzacanbaz.cointracker.screen.coinList
-import android.annotation.SuppressLint
+
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.rounded.Clear
 import androidx.compose.material.icons.rounded.Search
 import androidx.compose.runtime.*
@@ -22,26 +17,26 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.hamzacanbaz.cointracker.R
 import com.hamzacanbaz.core.items.CoinItem
-import com.hamzacanbaz.data.CoinBaseResponseModel.AllAssets.Data
+import com.hamzacanbaz.domain.model.Coin
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 
-
 @Composable
 fun CoinListScreen(
-    name:String?=null,
+    name: String? = null,
     goToAlarms: () -> Unit
 ) {
-    val viewModel: CoinListViewModel = viewModel()
+    val viewModel = hiltViewModel<CoinListViewModel>()
+    val coinList = viewModel.coinList
+
     val coroutineScope = rememberCoroutineScope()
-    var job:Job? = null
+    var job: Job? = null
 
 
 
@@ -51,35 +46,35 @@ fun CoinListScreen(
     ) {
         Column {
 
-            Row(modifier = Modifier
-                .height(50.dp)
-                .fillMaxWidth()) {
+            Row(
+                modifier = Modifier
+                    .height(50.dp)
+                    .fillMaxWidth()
+            ) {
                 SearchAppBar(viewModel = viewModel)
-
             }
-            CoinList(coinList = viewModel.coinListResponse)
+
+            CoinList(coinList = coinList)
         }
 
 
         LaunchedEffect(key1 = Unit) {
-           job = coroutineScope.launch() {
-               while(true){
-                   viewModel.getCoinList()
-                   delay(2000)
-               }
+            job = coroutineScope.launch() {
+                while (true) {
+                    viewModel.getCoinList()
+                    delay(2000)
+                }
             }
         }
 
 
-
-
     }
+
 }
 
 
-
 @Composable
-private fun SearchAppBar(
+fun SearchAppBar(
     viewModel: CoinListViewModel,
 ) {
     // Immediately update and keep track of query from text field changes.
@@ -100,7 +95,7 @@ private fun SearchAppBar(
             // To avoid crash, only query when string isn't empty.
             if (onQueryChanged.isNotEmpty()) {
                 // Pass latest query to refresh search results.
-              //  viewModel.performQuery(onQueryChanged)
+                //  viewModel.performQuery(onQueryChanged)
             }
         },
         leadingIcon = {
@@ -135,39 +130,18 @@ private fun SearchAppBar(
 
 
 @Composable
-fun CoinList(coinList:List<Data>){
-    Column(modifier = Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally){
-        LazyColumn{
-            items(coinList){
-                    coinItem ->
+fun CoinList(coinList: List<Coin>) {
+    Column(modifier = Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
+        LazyColumn {
+            items(coinList) { coinItem ->
                 CoinItem(item = coinItem)
             }
         }
     }
-    /*LazyColumn(modifier = Modifier
-        .fillMaxWidth()
-        .height(110.dp)){
 
-        itemsIndexed(items = coinList){
-            index, item ->
-            CoinItem(coin = item)
-        }
-    }*/
 }
 
 
-
-/*@Preview(showBackground = true)
-@Composable
-fun DefaultPreview(){
-    CoinTrackerTheme {
-        val coin = Data(id = "BTC", symbol = "", explorer = "hi"
-            , changePercent24Hr = "", marketCapUsd = "", maxSupply = "",
-        name = "BTC", priceUsd = "54353", rank = "1", supply = "213123",
-        volumeUsd24Hr = "213213", vwap24Hr = "31231")
-        CoinItem(coin = coin)
-    }
-}*/
 
 
 
