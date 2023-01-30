@@ -35,9 +35,6 @@ fun CoinListScreen(
     val viewModel = hiltViewModel<CoinListViewModel>()
     val coinList = viewModel.filtredCoinList
 
-
-
-
     Surface(
         modifier = Modifier.fillMaxSize(),
         color = Color.Black
@@ -131,6 +128,7 @@ fun CoinList(coinList: List<Coin>) {
     Column(modifier = Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
         LazyColumn {
             items(coinList) { coinItem ->
+                //CoinItem(coinName = coinItem.name, coinPrice = coinItem.priceUsd, coinChangePercent = coinItem.changePercent24Hr, coinSymbol = coinItem.symbol)
                 CoinItem(item = coinItem)
             }
         }
