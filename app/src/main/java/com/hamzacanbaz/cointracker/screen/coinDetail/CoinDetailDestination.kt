@@ -2,8 +2,6 @@ package com.hamzacanbaz.cointracker.screen.coinDetail
 
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
-import com.hamzacanbaz.cointracker.screen.coinList.CoinListDestination
-import com.hamzacanbaz.cointracker.screen.coinList.CoinListScreen
 import com.hamzacanbaz.core.navigation.Destination
 
 object CoinDetailDestination : Destination {
@@ -12,8 +10,9 @@ object CoinDetailDestination : Destination {
 
 fun NavGraphBuilder.coinDetailScreenGraph() {
     composable(
-        route = CoinDetailDestination.route,
+        route = "${CoinDetailDestination.route}/{coinDetailName}",
     ) {
-        CoinDetailScreen()
+        val coinDetailName = it.arguments?.getString("coinDetailName")
+        CoinDetailScreen(coinDetailName)
     }
 }

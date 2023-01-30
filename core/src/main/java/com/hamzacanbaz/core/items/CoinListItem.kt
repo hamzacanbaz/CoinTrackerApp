@@ -24,7 +24,7 @@ import androidx.compose.ui.unit.dp
 import coil.compose.rememberImagePainter
 import coil.size.Scale
 import coil.transform.CircleCropTransformation
-import com.hamzacanbaz.domain.model.Coin
+import com.hamzacanbaz.domain.model.allcoins.Coin
 import kotlin.math.roundToInt
 
 

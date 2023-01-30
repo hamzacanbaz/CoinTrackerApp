@@ -5,7 +5,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.hamzacanbaz.domain.model.Coin
+import com.hamzacanbaz.domain.model.allcoins.Coin
 import com.hamzacanbaz.domain.usecase.GetAllCoinsListUseCase
 import com.hamzacanbaz.domain.util.ResultData
 import dagger.hilt.android.lifecycle.HiltViewModel

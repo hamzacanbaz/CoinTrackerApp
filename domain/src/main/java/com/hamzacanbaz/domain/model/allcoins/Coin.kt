@@ -1,4 +1,4 @@
-package com.hamzacanbaz.domain.model
+package com.hamzacanbaz.domain.model.allcoins
 
 
 import com.google.gson.annotations.SerializedName

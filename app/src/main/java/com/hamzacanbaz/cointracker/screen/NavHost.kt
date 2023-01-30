@@ -13,7 +13,6 @@ import com.hamzacanbaz.cointracker.screen.splash.splashScreenGraph
 
 @Composable
 fun NavHost(navController: NavHostController) {
-    val testName = "hamza"
     NavHost(
         navController = navController,
         startDestination = SplashScreenDestination.route
@@ -26,9 +25,13 @@ fun NavHost(navController: NavHostController) {
             }
         })
         coinListScreenGraph(goToAlarms = {
-            navController.navigate(route= CoinDetailDestination.route)
+            navController.navigate(route = CoinDetailDestination.route)
+        }, goToCoinDetailScreen = {
+            navController.navigate(route = "${CoinDetailDestination.route}/{$it}")
         })
         settingsScreenGraph()
-        coinDetailScreenGraph()
+        coinDetailScreenGraph(
+
+        )
     }
 }
