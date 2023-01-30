@@ -1,6 +1,7 @@
 package com.hamzacanbaz.cointracker.screen.coinList
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -17,11 +18,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.hamzacanbaz.cointracker.R
 import com.hamzacanbaz.core.items.CoinItem
-import com.hamzacanbaz.domain.model.Coin
+import com.hamzacanbaz.domain.model.allcoins.Coin
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -30,7 +30,8 @@ import kotlinx.coroutines.launch
 @Composable
 fun CoinListScreen(
     name: String? = null,
-    goToAlarms: () -> Unit
+    goToAlarms: () -> Unit,
+    goToCoinDetailScreen: (coinDetailName: String) -> Unit
 ) {
     val viewModel = hiltViewModel<CoinListViewModel>()
     val coinList = viewModel.filtredCoinList
@@ -49,7 +50,7 @@ fun CoinListScreen(
                 SearchAppBar(viewModel = viewModel)
             }
 
-            CoinList(coinList = coinList)
+            CoinList(coinList = coinList, goToCoinDetailScreen)
         }
 
 
@@ -66,7 +67,7 @@ fun SearchAppBar(
     var query: String by rememberSaveable { mutableStateOf("") }
     var showClearIcon by rememberSaveable { mutableStateOf(false) }
     val coroutineScope = rememberCoroutineScope()
-    var job:Job? = null
+    var job: Job? = null
 
     if (query.isEmpty()) {
         showClearIcon = false
@@ -78,7 +79,7 @@ fun SearchAppBar(
         value = query,
         onValueChange = { onQueryChanged ->
             query = onQueryChanged
-            viewModel.performQuery(onQueryChanged,viewModel.coinList)
+            viewModel.performQuery(onQueryChanged, viewModel.coinList)
         },
         leadingIcon = {
             Icon(
@@ -89,8 +90,10 @@ fun SearchAppBar(
         },
         trailingIcon = {
             if (showClearIcon) {
-                IconButton(onClick = { query = ""
-                    viewModel.performQuery(query,viewModel.coinList)}) {
+                IconButton(onClick = {
+                    query = ""
+                    viewModel.performQuery(query, viewModel.coinList)
+                }) {
                     Icon(
                         imageVector = Icons.Rounded.Clear,
                         tint = MaterialTheme.colors.onBackground,
@@ -124,12 +127,18 @@ fun SearchAppBar(
 
 
 @Composable
-fun CoinList(coinList: List<Coin>) {
+fun CoinList(
+    coinList: List<Coin>, goToCoinDetailScreen: (coinDetailName: String) -> Unit
+) {
     Column(modifier = Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
         LazyColumn {
             items(coinList) { coinItem ->
                 //CoinItem(coinName = coinItem.name, coinPrice = coinItem.priceUsd, coinChangePercent = coinItem.changePercent24Hr, coinSymbol = coinItem.symbol)
-                CoinItem(item = coinItem)
+                Box(Modifier.clickable(onClick = {
+                    goToCoinDetailScreen.invoke(coinItem.id)
+                })) {
+                    CoinItem(item = coinItem)
+                }
             }
         }
     }
