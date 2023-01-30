@@ -18,6 +18,7 @@ class CoinListViewModel @Inject constructor(
 ) : ViewModel() {
 
     var coinList: List<Coin> by mutableStateOf(listOf())
+    var filtredCoinList:List<Coin> by mutableStateOf(listOf())
     var errorMessage: String by mutableStateOf("")
 
     fun getCoinList() {
@@ -27,13 +28,30 @@ class CoinListViewModel @Inject constructor(
                     is ResultData.Success -> {
                         coinList = result.data?.data ?: listOf()
                     }
-                    is ResultData.Failed -> {}
+                    is ResultData.Failed -> {errorMessage = result.errorMessage.toString()}
                     is ResultData.Loading -> {}
                 }
 
             }
 
         }
+    }
+
+    fun performQuery(
+        query: String,
+        coinList:List<Coin>
+    ) {
+        val filteredList = ArrayList<Coin>()
+        coinList.forEach { coin ->
+            if(!query.isNullOrEmpty()){
+                if (coin.symbol.lowercase().contains(query.lowercase())) {
+                    filteredList.add(coin)
+                }
+            }else{
+                filteredList.add(coin)
+            }
+        }
+        filtredCoinList = filteredList
     }
 
 //    fun getCoinList(){

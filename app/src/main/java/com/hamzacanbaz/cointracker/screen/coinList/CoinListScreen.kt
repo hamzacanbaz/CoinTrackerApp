@@ -33,10 +33,8 @@ fun CoinListScreen(
     goToAlarms: () -> Unit
 ) {
     val viewModel = hiltViewModel<CoinListViewModel>()
-    val coinList = viewModel.coinList
+    val coinList = viewModel.filtredCoinList
 
-    val coroutineScope = rememberCoroutineScope()
-    var job: Job? = null
 
 
 
@@ -48,23 +46,13 @@ fun CoinListScreen(
 
             Row(
                 modifier = Modifier
-                    .height(50.dp)
+                    .wrapContentHeight()
                     .fillMaxWidth()
             ) {
                 SearchAppBar(viewModel = viewModel)
             }
 
             CoinList(coinList = coinList)
-        }
-
-
-        LaunchedEffect(key1 = Unit) {
-            job = coroutineScope.launch() {
-                while (true) {
-                    viewModel.getCoinList()
-                    delay(2000)
-                }
-            }
         }
 
 
@@ -80,6 +68,8 @@ fun SearchAppBar(
     // Immediately update and keep track of query from text field changes.
     var query: String by rememberSaveable { mutableStateOf("") }
     var showClearIcon by rememberSaveable { mutableStateOf(false) }
+    val coroutineScope = rememberCoroutineScope()
+    var job:Job? = null
 
     if (query.isEmpty()) {
         showClearIcon = false
@@ -90,13 +80,8 @@ fun SearchAppBar(
     TextField(
         value = query,
         onValueChange = { onQueryChanged ->
-            // If user makes changes to text, immediately updated it.
             query = onQueryChanged
-            // To avoid crash, only query when string isn't empty.
-            if (onQueryChanged.isNotEmpty()) {
-                // Pass latest query to refresh search results.
-                //  viewModel.performQuery(onQueryChanged)
-            }
+            viewModel.performQuery(onQueryChanged,viewModel.coinList)
         },
         leadingIcon = {
             Icon(
@@ -107,7 +92,8 @@ fun SearchAppBar(
         },
         trailingIcon = {
             if (showClearIcon) {
-                IconButton(onClick = { query = "" }) {
+                IconButton(onClick = { query = ""
+                    viewModel.performQuery(query,viewModel.coinList)}) {
                     Icon(
                         imageVector = Icons.Rounded.Clear,
                         tint = MaterialTheme.colors.onBackground,
@@ -126,6 +112,17 @@ fun SearchAppBar(
             .fillMaxWidth()
             .background(color = MaterialTheme.colors.background, shape = RectangleShape)
     )
+
+    LaunchedEffect(key1 = Unit) {
+        job = coroutineScope.launch() {
+            while (true) {
+                viewModel.getCoinList()
+                viewModel.performQuery(query, viewModel.coinList)
+                delay(3000)
+            }
+        }
+    }
+
 }
 
 
