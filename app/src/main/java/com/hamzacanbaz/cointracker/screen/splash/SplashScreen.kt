@@ -13,20 +13,25 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import com.airbnb.lottie.LottieAnimationView
+import com.airbnb.lottie.compose.LottieCompositionSpec
+import com.airbnb.lottie.compose.LottieConstants
+import com.airbnb.lottie.compose.rememberLottieComposition
 
 
 private const val alphaInitial = 0f
 private const val alphaTarget = 1f
-private const val alphaDuration = 1000
+private const val alphaDuration = 8000
 
 @Composable
 internal fun SplashScreen(
     onSplashScreenComplete: () -> Unit
 ) {
+
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color.Yellow),
+            .background(Color.Black),
         contentAlignment = Alignment.Center
     ) {
         var targetValue by remember { mutableStateOf(alphaInitial) }
@@ -39,11 +44,7 @@ internal fun SplashScreen(
             }
         )
 
-        Image(
-            painter = painterResource(id = android.R.drawable.ic_delete),
-            contentDescription = null,
-            modifier = Modifier.alpha(alpha)
-        )
+        LottieAnimation()
 
         LaunchedEffect(Unit) {
             targetValue = alphaTarget
@@ -52,8 +53,8 @@ internal fun SplashScreen(
 }
 
 @Composable
-fun Greeting(name: String) {
-    Text(text = "Hello $name!")
+fun LottieAnimation(){
+    val composition by rememberLottieComposition(spec = LottieCompositionSpec.Url("https://assets10.lottiefiles.com/packages/lf20_DV5KsPrQIn.json"))
+    com.airbnb.lottie.compose.LottieAnimation(composition = composition, iterations = LottieConstants.IterateForever)
 }
-
 
