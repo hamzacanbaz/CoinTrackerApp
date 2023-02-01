@@ -54,42 +54,4 @@ class CoinListViewModel @Inject constructor(
         filtredCoinList = filteredList
     }
 
-//    fun getCoinList(){
-//        viewModelScope.launch {
-//            try {
-//                apiUtil.getCoinList().getAllCoinList().enqueue(object : Callback<AllCoins>{
-//                    override fun onResponse(call: Call<AllCoins>, response: Response<AllCoins>) {
-//                        coinListResponse = response.body()!!.data
-//                    }
-//
-//                    override fun onFailure(call: Call<AllCoins>, t: Throwable) {
-//                        errorMessage = t.message.toString()
-//                    }
-//
-//                }
-//                )
-//            }catch (e:Exception){
-//                errorMessage = e.message.toString()
-//            }
-//        }
-//    }
-
-
-    /* fun performQuery(
-         query: String,
-     ) {
-         // New empty array list which contains filtered list with query.
-         val filteredList = ArrayList<Data>()
-         // Loop into each actors data to read actors name.
-         actorsListData().forEach { actors ->
-             // Compare query with actors name to find a match.
-             if (actors.actorName.lowercase().contains(query.lowercase())) {
-                 // If match is found, add that name to filtered list.
-                 filteredList.add(Actors(actors.actorName))
-             }
-         }
-         // Post updated list to existing LiCeData
-         _list.postValue(filteredList)
-     }*/
-
 }
