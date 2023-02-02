@@ -20,24 +20,23 @@ class CoinDetailViewModel @Inject constructor(
     var coinDetail: Coin by mutableStateOf(Coin())
     var errorMessage: String by mutableStateOf("")
 
-    init {
-        getCoinDetail()
-    }
 
-    fun getCoinDetail() {
+    fun getCoinDetail(coinName: String?) {
         viewModelScope.launch {
-            getCoinDetailUseCase.invoke("bitcoin").collect { result ->
-                when (result) {
-                    is ResultData.Success -> {
-                        coinDetail = result.data?.data ?: Coin()
-                        println(coinDetail)
+            if (coinName != null) {
+                getCoinDetailUseCase.invoke(coinName.removeSuffix("}").removePrefix("{")).collect { result ->
+                    when (result) {
+                        is ResultData.Success -> {
+                            coinDetail = result.data?.data ?: Coin()
+                            println(coinDetail)
+                        }
+                        is ResultData.Failed -> {
+                            errorMessage = result.errorMessage.toString()
+                        }
+                        is ResultData.Loading -> {}
                     }
-                    is ResultData.Failed -> {
-                        errorMessage = result.errorMessage.toString()
-                    }
-                    is ResultData.Loading -> {}
-                }
 
+                }
             }
 
         }
