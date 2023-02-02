@@ -42,6 +42,13 @@ fun MainScreen() {
         else -> false
     }
 
+    val bottomBarRoutes = arrayOf(NavigationItem.Home.route, NavigationItem.Settings.route)
+    val shouldShowBottomBar: Boolean =
+        navController.currentBackStackEntryAsState().value?.destination?.route in bottomBarRoutes
+
+
+
+
     Scaffold(
         topBar = {
             if (!hideBottomNavbarAndToolbar) {
@@ -62,7 +69,7 @@ fun MainScreen() {
                 )
             }
         }, bottomBar = {
-            if (!hideBottomNavbarAndToolbar) {
+            if (shouldShowBottomBar) {
                 BottomBar(navHostController = navController)
             }
         }
