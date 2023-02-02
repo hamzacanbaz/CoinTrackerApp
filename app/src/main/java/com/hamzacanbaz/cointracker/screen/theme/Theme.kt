@@ -7,8 +7,8 @@ import androidx.compose.material.lightColors
 import androidx.compose.runtime.Composable
 
 private val DarkColorPalette = darkColors(
-    primary = Purple200,
-    primaryVariant = Purple700,
+    primary = ColorPrimary,
+    primaryVariant = ColorBlack,
     secondary = Teal200
 )
 
@@ -29,12 +29,8 @@ private val LightColorPalette = lightColors(
 
 @Composable
 fun CoinTrackerTheme(darkTheme: Boolean = isSystemInDarkTheme(), content: @Composable () -> Unit) {
-    val colors = if (darkTheme) {
+    val colors =
         DarkColorPalette
-    } else {
-        LightColorPalette
-    }
-
 
     MaterialTheme(
         colors = colors,
