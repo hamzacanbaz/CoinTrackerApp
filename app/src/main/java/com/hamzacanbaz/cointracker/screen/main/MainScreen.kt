@@ -18,6 +18,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.hamzacanbaz.cointracker.screen.NavHost
 import com.hamzacanbaz.cointracker.screen.coinList.CoinListDestination
+import com.hamzacanbaz.cointracker.screen.coinList.CoinListScreen
 import com.hamzacanbaz.cointracker.screen.settings.SettingsDestination
 import com.hamzacanbaz.cointracker.screen.splash.SplashScreenDestination
 import com.hamzacanbaz.core.items.NavigationItem
@@ -37,8 +38,9 @@ fun MainScreen() {
         else -> true
     }
 
-    val hideBottomNavbarAndToolbar = when (currentRoute.value?.destination?.route) {
+    val hideTopBar = when(currentRoute.value?.destination?.route) {
         SplashScreenDestination.route -> true
+        CoinListDestination.route -> true
         else -> false
     }
 
@@ -51,7 +53,7 @@ fun MainScreen() {
 
     Scaffold(
         topBar = {
-            if (!hideBottomNavbarAndToolbar) {
+            if (!hideTopBar) {
                 TopAppBar(
                     title = {
                         Text(text = "Top App Bar")

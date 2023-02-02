@@ -1,23 +1,31 @@
 package com.hamzacanbaz.cointracker.screen.coinList
 
+import android.annotation.SuppressLint
+import android.app.ActionBar
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.rounded.Clear
 import androidx.compose.material.icons.rounded.Search
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.hamzacanbaz.cointracker.R
 import com.hamzacanbaz.core.items.CoinItem
@@ -34,26 +42,25 @@ fun CoinListScreen(
     goToCoinDetailScreen: (coinDetailName: String) -> Unit
 ) {
     val viewModel = hiltViewModel<CoinListViewModel>()
+    viewModel.getCoinList()
     val coinList = viewModel.filtredCoinList
 
     Surface(
         modifier = Modifier.fillMaxSize(),
         color = Color.Black
     ) {
-        Column {
 
+        Column(modifier = Modifier.padding(bottom = 50.dp)) {
             Row(
                 modifier = Modifier
                     .wrapContentHeight()
                     .fillMaxWidth()
             ) {
-                SearchAppBar(viewModel = viewModel)
+                 SearchAppBar(viewModel = viewModel)
             }
 
             CoinList(coinList = coinList, goToCoinDetailScreen)
         }
-
-
     }
 
 }
@@ -63,6 +70,7 @@ fun CoinListScreen(
 fun SearchAppBar(
     viewModel: CoinListViewModel,
 ) {
+
     // Immediately update and keep track of query from text field changes.
     var query: String by rememberSaveable { mutableStateOf("") }
     var showClearIcon by rememberSaveable { mutableStateOf(false) }
@@ -125,7 +133,6 @@ fun SearchAppBar(
 
 }
 
-
 @Composable
 fun CoinList(
     coinList: List<Coin>, goToCoinDetailScreen: (coinDetailName: String) -> Unit
@@ -133,7 +140,6 @@ fun CoinList(
     Column(modifier = Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
         LazyColumn {
             items(coinList) { coinItem ->
-                //CoinItem(coinName = coinItem.name, coinPrice = coinItem.priceUsd, coinChangePercent = coinItem.changePercent24Hr, coinSymbol = coinItem.symbol)
                 Box(Modifier.clickable(onClick = {
                     goToCoinDetailScreen.invoke(coinItem.id)
                 })) {
