@@ -31,7 +31,7 @@ import kotlin.math.roundToInt
 
 
 @Composable
-fun CoinItem(item: Coin){
+fun CoinItem(item: Coin,onSwipe: ()-> Unit){
 
     val coinValue = decimalPointChanger(item.priceUsd,4.0)
     val coinChangeRate = decimalPointChanger(item.changePercent24Hr,2.0)
@@ -39,9 +39,7 @@ fun CoinItem(item: Coin){
     val imageVector = arrowIconDirection(coinChangeRate = coinChangeRate.toFloat())
 
     val save = SwipeAction(
-        onSwipe = {
-            Log.d("Deneme","Saved")
-        },
+        onSwipe = onSwipe,
         icon = {
             Icon(
                 imageVector = Icons.Rounded.Favorite,
@@ -61,7 +59,7 @@ fun CoinItem(item: Coin){
                 .wrapContentHeight()
                 .padding(start = 8.dp, end = 8.dp, bottom = 8.dp, top = 8.dp)) {
 
-            SwipeableActionsBox(startActions = listOf(save)) {
+            SwipeableActionsBox(startActions = listOf(save), swipeThreshold = 200.dp) {
 
             Row(modifier = Modifier.height(100.dp)) {
 
@@ -140,6 +138,8 @@ fun CoinItem(item: Coin){
     }
     }
     }
+
+
 
 private fun arrowIconDirection(coinChangeRate: Float):ImageVector{
     if(coinChangeRate < 0){
