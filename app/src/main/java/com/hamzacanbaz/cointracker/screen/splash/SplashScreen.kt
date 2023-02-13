@@ -13,20 +13,27 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.airbnb.lottie.LottieAnimationView
 import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.LottieConstants
 import com.airbnb.lottie.compose.rememberLottieComposition
+import com.hamzacanbaz.cointracker.screen.coinList.CoinListViewModel
 
 
 private const val alphaInitial = 0f
 private const val alphaTarget = 1f
-private const val alphaDuration = 8000
+private const val alphaDuration = 3000
 
 @Composable
 internal fun SplashScreen(
     onSplashScreenComplete: () -> Unit
 ) {
+
+    val viewModel = hiltViewModel<CoinListViewModel>()
+
+    viewModel.getCoinList()
+    viewModel.performQuery("",viewModel.coinList,"Rank",0)
 
     Box(
         modifier = Modifier

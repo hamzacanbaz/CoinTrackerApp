@@ -17,9 +17,7 @@ fun NavGraphBuilder.coinListScreenGraph(
     ) { it ->
 
         CoinListScreen(
-            goToAlarms = {
-                goToAlarms.invoke()
-            }, goToCoinDetailScreen = { id->
+           goToCoinDetailScreen = { id->
                 goToCoinDetailScreen(id)
             }
         )

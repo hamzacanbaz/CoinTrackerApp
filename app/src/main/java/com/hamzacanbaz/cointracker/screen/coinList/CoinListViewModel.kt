@@ -1,6 +1,8 @@
 package com.hamzacanbaz.cointracker.screen.coinList
 
+import android.util.Log
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
@@ -17,9 +19,13 @@ class CoinListViewModel @Inject constructor(
     private val getAllCoinsListUseCase: GetAllCoinsListUseCase
 ) : ViewModel() {
 
-    var coinList: List<Coin> by mutableStateOf(listOf())
+     var coinList:List<Coin>  by mutableStateOf(listOf())
     var filtredCoinList:List<Coin> by mutableStateOf(listOf())
     var errorMessage: String by mutableStateOf("")
+    var loading: Boolean by mutableStateOf(false)
+
+
+
 
     fun getCoinList() {
         viewModelScope.launch {
@@ -27,21 +33,23 @@ class CoinListViewModel @Inject constructor(
                 when (result) {
                     is ResultData.Success -> {
                         coinList = result.data?.data ?: listOf()
+                        loading = false
                     }
-                    is ResultData.Failed -> {errorMessage = result.errorMessage.toString()}
-                    is ResultData.Loading -> {}
+                    is ResultData.Failed -> {errorMessage = result.errorMessage.toString()
+                    loading = false}
+                    is ResultData.Loading -> {loading = true}
                 }
-
             }
-
         }
     }
 
     fun performQuery(
         query: String,
-        coinList:List<Coin>
+        coinList:List<Coin>,
+        selectedFilterType:String,
+        isSortedByIncrease:Int
     ) {
-        val filteredList = ArrayList<Coin>()
+        var filteredList = ArrayList<Coin>()
         coinList.forEach { coin ->
             if(!query.isNullOrEmpty()){
                 if (coin.symbol.lowercase().contains(query.lowercase())) {
@@ -51,6 +59,17 @@ class CoinListViewModel @Inject constructor(
                 filteredList.add(coin)
             }
         }
+
+        when(selectedFilterType){
+            "Rank" -> filteredList.sortBy {it.rank.toFloat()}
+            "Price" -> filteredList.sortBy {it.priceUsd.toFloat()}
+            "24hChange" -> filteredList.sortBy {it.changePercent24Hr.toFloat()}
+        }
+        Log.e("Deneme",isSortedByIncrease.toString())
+        if(isSortedByIncrease == 1)
+            filteredList.reverse()
+
+
         filtredCoinList = filteredList
     }
 
