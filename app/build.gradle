@@ -95,6 +95,12 @@ dependencies {
     //lottie
     implementation "com.airbnb.android:lottie-compose:4.2.0"
 
+    // MPChart
+    implementation "com.github.PhilJay:MPAndroidChart:$mpchart_version"
+
+    implementation 'io.finnhub:kotlin-client:2.0.18'
+
+
 
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.4'
