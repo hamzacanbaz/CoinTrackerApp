@@ -3,6 +3,7 @@ package com.hamzacanbaz.data
 import com.hamzacanbaz.data.remote.RemoteDataSource
 import com.hamzacanbaz.domain.model.allcoins.AllCoinsResponse
 import com.hamzacanbaz.domain.model.coinDetail.CoinDetailResponse
+import com.hamzacanbaz.domain.model.coinPriceHistory.CoinDetailHistoryResponse
 import com.hamzacanbaz.domain.repo.CryptoRepository
 import com.hamzacanbaz.domain.util.ResultData
 import kotlinx.coroutines.flow.Flow
@@ -33,6 +34,18 @@ class CryptoRepositoryImpl @Inject constructor(
                 emit(ResultData.Failed(errorMessage = e.message))
             }
         }
+
+    override suspend fun getCoinDetailHistory(
+        coinId: String,
+        timeInterval: String
+    ): Flow<ResultData<CoinDetailHistoryResponse>> = flow{
+        emit(ResultData.Loading())
+        try {
+            emit(ResultData.Success(remoteDataSource.getCoinDetailHistory(coinId, timeInterval)))
+        } catch (e: Exception) {
+            emit(ResultData.Failed(errorMessage = e.message))
+        }
+    }
 
 
 }
