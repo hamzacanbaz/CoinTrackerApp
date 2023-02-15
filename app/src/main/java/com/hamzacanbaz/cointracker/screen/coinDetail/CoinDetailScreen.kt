@@ -1,14 +1,15 @@
 package com.hamzacanbaz.cointracker.screen.coinDetail
 
+import android.annotation.SuppressLint
 import android.graphics.Paint
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Divider
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -26,6 +27,7 @@ import com.github.mikephil.charting.components.YAxis.AxisDependency
 import com.github.mikephil.charting.data.*
 import com.hamzacanbaz.domain.model.coinDetail.Coin
 import com.hamzacanbaz.domain.model.coinPriceHistory.Data
+import com.hamzacanbaz.domain.util.ResultData
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -36,10 +38,10 @@ fun CoinDetailScreen(
 ) {
     val viewModel = hiltViewModel<CoinDetailViewModel>()
     viewModel.getCoinDetail(coinName)
-    viewModel.getCoinDetailHistory(coinName)
+//    viewModel.getCoinDetailHistory(coinName, "d1")
     val coinDetail = viewModel.coinDetail
-    val coinDetailHistory = viewModel.coinDetailHistory
-    println(coinDetailHistory)
+    val coinDetailHistory by viewModel.getCoinDetailHistory()
+    val timeRangeState = remember { mutableStateOf(TimeRange.ONE_HOUR) }
 
     LaunchedEffect(key1 = Unit) {
         this.launch() {
@@ -50,20 +52,49 @@ fun CoinDetailScreen(
         }
     }
 
+    when (coinDetailHistory) {
+        is ResultData.Loading -> {
+            println("loading")
+        }
+        is ResultData.Success -> {
+            println("success")
+            val coinHistoryPrice = (coinDetailHistory as ResultData.Success<List<Data>>).data
 
-    Surface(
-        modifier = Modifier
-            .fillMaxSize(),
-        color = Color.Black
-    ) {
-        App(coinDetail, coinDetailHistory)
+            Surface(
+                modifier = Modifier
+                    .fillMaxSize(),
+                color = Color.Black
+            ) {
+                App(
+                    coinDetail,
+                    coinHistoryPrice ?: listOf(),
+                    viewModel,
+                    timeRangeState
+                ) {
+                    timeRangeState.value = it
+                }
+            }
+        }
+        is ResultData.Failed -> {
+            println("failed")
+        }
     }
 
-
+    LaunchedEffect(Unit) {
+        viewModel.getCoinDetailHistoryFromRemote(coinName, TimeRange.ONE_DAY.id)
+    }
 }
 
 @Composable
-fun App(coinDetail: Coin, coinDetailHistory: List<Data>) {
+fun App(
+    coinDetail: Coin,
+    coinDetailHistory: List<Data>,
+    viewModel: CoinDetailViewModel,
+    timeRange: MutableState<TimeRange>,
+    timeRangeChanged: (TimeRange) -> Unit
+) {
+
+    val timeRangeState = remember { mutableStateOf(timeRange) }
 
     Column(
         modifier = Modifier
@@ -77,9 +108,17 @@ fun App(coinDetail: Coin, coinDetailHistory: List<Data>) {
         Spacer(modifier = Modifier.height(32.dp))
 
 //        Graphic(coinDetail)
-        if (coinDetailHistory.isNotEmpty()){
+        TimeRangePicker(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(start = 16.dp, top = 16.dp, end = 16.dp),
+            selectedTimeRange = timeRangeState.value.value
+        ) { timeRange ->
+            timeRangeChanged.invoke(timeRange)
+            viewModel.getCoinDetailHistoryFromRemote(coinDetail.id, timeRange.id)
+        }
+        if (coinDetailHistory.isNotEmpty()) {
             LineGraphic(coinDetailHistory)
-
         }
 
         CoinDetailValueItem(
@@ -323,6 +362,91 @@ fun CoinDetailValueItem(infoText: String, valueText: String) {
     }
 }
 
+enum class TimeRange(val id: String) {
+    ONE_MIN("m1"), FIVE_MIN("m5"), FIFTEEN_MIN("m15"), THIRTY_MIN("m30"), ONE_HOUR("h1"),
+    TWELVE_HOUR("h12"), ONE_DAY("d1");
+}
+
+
+@Composable
+fun TimeRangePicker(
+    modifier: Modifier = Modifier,
+    selectedTimeRange: TimeRange = TimeRange.FIFTEEN_MIN,
+    onTimeRangeSelected: (TimeRange) -> Unit = {}
+) {
+    Row(
+        modifier = modifier,
+        horizontalArrangement = Arrangement.SpaceAround
+    ) {
+        TimeRangeChip(
+            time = "1m",
+            isSelected = selectedTimeRange == TimeRange.ONE_MIN
+        ) {
+            onTimeRangeSelected(TimeRange.ONE_MIN)
+        }
+
+        TimeRangeChip(
+            time = "5m",
+            isSelected = selectedTimeRange == TimeRange.FIVE_MIN
+        ) {
+            onTimeRangeSelected(TimeRange.FIVE_MIN)
+        }
+
+        TimeRangeChip(
+            time = "15m",
+            isSelected = selectedTimeRange == TimeRange.FIFTEEN_MIN
+        ) {
+            onTimeRangeSelected(TimeRange.FIFTEEN_MIN)
+        }
+
+        TimeRangeChip(
+            time = "30m",
+            isSelected = selectedTimeRange == TimeRange.THIRTY_MIN
+        ) {
+            onTimeRangeSelected(TimeRange.THIRTY_MIN)
+        }
+
+        TimeRangeChip(
+            time = "1h",
+            isSelected = selectedTimeRange == TimeRange.ONE_HOUR
+        ) {
+            onTimeRangeSelected(TimeRange.ONE_HOUR)
+        }
+
+        TimeRangeChip(
+            time = "12h",
+            isSelected = selectedTimeRange == TimeRange.TWELVE_HOUR
+        ) {
+            onTimeRangeSelected(TimeRange.TWELVE_HOUR)
+        }
+    }
+}
+
+@Composable
+private fun TimeRangeChip(
+    time: String,
+    isSelected: Boolean,
+    onTimeRangeSelected: () -> Unit
+) {
+    Box(
+        modifier = Modifier
+            .background(
+                color = if (isSelected) Color.White else Color.Black,
+                shape = RoundedCornerShape(20.dp)
+            )
+            .clickable {
+                onTimeRangeSelected()
+            },
+    ) {
+        Text(
+            text = time,
+            color = if (isSelected) Color.Black else Color.White,
+            modifier = Modifier.padding(8.dp)
+        )
+    }
+}
+
+
 fun String.formatFloatingPoint(afterPointCount: Int): String {
     val split = this.split(".")
     return if (this.length > 1) {
@@ -332,6 +456,7 @@ fun String.formatFloatingPoint(afterPointCount: Int): String {
     }
 }
 
+@SuppressLint("UnrememberedMutableState")
 @Preview(showBackground = true)
 @Composable
 fun previewUi() {
@@ -339,7 +464,7 @@ fun previewUi() {
         modifier = Modifier.fillMaxSize(),
         color = Color.Black
     ) {
-        App(Coin(), listOf())
+        App(Coin(), listOf(), hiltViewModel(), mutableStateOf(TimeRange.ONE_DAY)) {}
     }
 }
 

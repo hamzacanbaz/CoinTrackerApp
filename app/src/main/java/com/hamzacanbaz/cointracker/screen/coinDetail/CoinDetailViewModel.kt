@@ -1,5 +1,6 @@
 package com.hamzacanbaz.cointracker.screen.coinDetail
 
+import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -21,8 +22,10 @@ class CoinDetailViewModel @Inject constructor(
 ) : ViewModel() {
 
     var coinDetail: Coin by mutableStateOf(Coin())
-    var coinDetailHistory: List<Data> by mutableStateOf(listOf())
+//    var coinDetailHistory: List<Data> by mutableStateOf(listOf())
     var errorMessage: String by mutableStateOf("")
+    private val coinDetailHistory = mutableStateOf<ResultData<List<Data>>>(ResultData.Loading())
+    fun getCoinDetailHistory(): State<ResultData<List<Data>>> = coinDetailHistory
 
 
 
@@ -34,6 +37,7 @@ class CoinDetailViewModel @Inject constructor(
                         when (result) {
                             is ResultData.Success -> {
                                 coinDetail = result.data?.data ?: Coin()
+
                                 println(coinDetail)
                             }
                             is ResultData.Failed -> {
@@ -48,8 +52,9 @@ class CoinDetailViewModel @Inject constructor(
         }
     }
 
-    fun getCoinDetailHistory(coinName: String?, timeInterval: String = "d1") {
+    fun getCoinDetailHistoryFromRemote(coinName: String?, timeInterval: String) {
         viewModelScope.launch {
+            coinDetailHistory.value = ResultData.Loading()
             if (coinName != null) {
                 getCoinDetailHistoryUseCase.invoke(
                     coinName.removeSuffix("}").removePrefix("{"),
@@ -57,10 +62,10 @@ class CoinDetailViewModel @Inject constructor(
                 ).collect { result ->
                     when (result) {
                         is ResultData.Success -> {
-                            coinDetailHistory = result.data?.data ?: listOf()
+                            coinDetailHistory.value = ResultData.Success(result.data?.data ?: listOf())
                         }
                         is ResultData.Failed -> {
-                            errorMessage = result.errorMessage.toString()
+                            coinDetailHistory.value = ResultData.Failed(errorMessage=result.errorMessage.toString())
                         }
                         is ResultData.Loading -> {}
                     }
